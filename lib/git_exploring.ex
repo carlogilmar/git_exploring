@@ -1,6 +1,5 @@
 defmodule GitExploring do
 
-  alias GitExploring.Formatter
   alias GitExploring.Binnacle
 
   def start_analysis( file_path ) do
