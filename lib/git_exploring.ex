@@ -12,7 +12,10 @@ defmodule GitExploring do
 
   def reading_commits( file_path ) do
     {output, _code} = System.cmd("git", ["log", "--all"], cd: file_path)
-    Formatter.parse_commits_from_log( output )
+    commit_lines = Formatter.parse_commits_from_log( output )
+    for commit <- commit_lines do
+      Formatter.parse_commit_references( commit )
+    end
   end
 
 end
