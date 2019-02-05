@@ -13,13 +13,31 @@ defmodule GitExploring.Formatter do
     { String.trim(hash), author_email, commit_date, String.trim(description) }
   end
 
-  def get_refs( commit ) when length(commit) == 5 do
+  def get_refs( commit ) do
+    case length(commit) do
+      5 -> get_refs_from_commit( commit )
+      6 -> get_refs_from_merge( commit )
+      _ -> get_refs_from_squash( commit )
+    end
+  end
+
+  def get_refs_from_commit( commit ) do
     [hash, author, date, _empty, description] = commit
     [hash, author, date, description]
   end
-  def get_refs( commit ) when length(commit) == 6 do
-    [hash, author, date, _empty, description, _empty] = commit
-    [hash, author, date, description]
+
+  def get_refs_from_merge( commit )do
+    [ c1, c2, c3, c4, c5, c6] = commit
+    case c5 do
+      "" -> [ c1, c3, c4, c6]
+      _ -> [ c1, c2, c3, c5 ]
+    end
+  end
+
+  #TODO: Make a bunch of commits per squash
+  def get_refs_from_squash( commit ) do
+    [ hash | [author | [ date | commits_tail] ] ] = commit
+    [hash, author, date, "  squash commit"]
   end
 
 end
