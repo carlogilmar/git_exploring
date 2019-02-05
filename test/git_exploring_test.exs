@@ -8,4 +8,11 @@ defmodule GitExploringTest do
     assert length(commits) == 6
   end
 
+  test "Format a single commit" do
+    commit = " fb4d6ccd9431c71ec99b842d95bc0f5cb7356995\nAuthor: carlogilmar <carlogilmar12@gmail.com>\nDate:   Tue Jan 22 19:16:50 2019 -0600\n\n    FS-537 Adding csv extension in everything"
+    tuple = { "fb4d6ccd9431c71ec99b842d95bc0f5cb7356995", "carlogilmar12@gmail.com", "Tue Jan 22 19:16:50 2019 -0600", "FS-537 Adding csv extension in everything" }
+    commit_tupled = Formatter.parse_commit_references( commit )
+    assert commit_tupled == tuple
+  end
+
 end
