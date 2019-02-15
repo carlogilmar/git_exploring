@@ -1,5 +1,10 @@
 defmodule GitExploring.Formatter do
 
+  def get_commit_lines( output_from_log ) do
+    commit_lines = parse_commits_from_log( output_from_log )
+    for commit <- commit_lines, do: parse_commit_references( commit )
+  end
+
   def parse_commits_from_log( output ) do
     output_parsed = "\n\n" <> output |> String.split("\n\ncommit")
     [_ | commits_descriptions] = output_parsed
