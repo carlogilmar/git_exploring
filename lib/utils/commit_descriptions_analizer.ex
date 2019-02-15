@@ -12,10 +12,12 @@ defmodule GitExploring.CommitDescriptionsAnalizer do
 
   def get_words_counters( words ) do
     words_for_find = words |> Enum.uniq()
-    for w <- words_for_find do
-      counter = Enum.count( words, fn(word) -> word == w end)
-      {w, counter}
-    end
+    counters =
+      for w <- words_for_find do
+        counter = Enum.count( words, fn(word) -> word == w end)
+        {w, counter}
+      end
+    Enum.sort_by( counters, fn {_word, counter} -> counter end)
   end
 
 end
