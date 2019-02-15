@@ -8,4 +8,11 @@ defmodule CommitDescriptionsAnalizerTest do
     assert words == ["#60", "removing", "get_initials", "from", "patient", "and", "responsible"]
   end
 
+  test "Get all the words by a list of commits" do
+    c = {"", "", "", "#60 Removing get_initials from patient and responsible"}
+    commits = [c,c,c,c]
+    words_list = CommitDescriptionsAnalizer.get_words_from_commits( commits )
+    assert length(words_list) == 28
+  end
+
 end
