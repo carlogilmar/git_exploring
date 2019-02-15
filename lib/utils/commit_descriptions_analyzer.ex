@@ -1,5 +1,6 @@
 defmodule GitExploring.CommitDescriptionsAnalyzer do
 
+  @doc" ## Main function ##"
   def analyzer_commits_words( commits ) do
     commits
       |> get_words_from_commits()
@@ -17,13 +18,27 @@ defmodule GitExploring.CommitDescriptionsAnalyzer do
   end
 
   def get_words_counters( words ) do
-    words_for_find = words |> Enum.uniq()
-    counters =
-      for w <- words_for_find do
-        counter = Enum.count( words, fn(word) -> word == w end)
-        {w, counter}
-      end
-    Enum.sort_by( counters, fn {_word, counter} -> counter end)
+    words
+      |> Enum.uniq()
+      |> get_counters(words)
+      |> Enum.sort_by( fn {_word, counter} -> counter end)
+      |> Enum.reverse()
+      |> get_most_recurrent_words()
+  end
+
+  def get_counters( words_for_find, words ) do
+    for w <- words_for_find do
+      counter = Enum.count( words, fn(word) -> word == w end)
+      {w, counter}
+    end
+  end
+
+  def get_most_recurrent_words( counters ) do
+    size = length(counters)
+    case size do
+      size when size < 25 -> counters
+      _ -> Enum.slice( counters, 0, 25)
+    end
   end
 
 end
