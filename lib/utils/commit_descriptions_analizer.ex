@@ -1,0 +1,2 @@
+defmodule CommitDescriptionsAnalizer do
+end
