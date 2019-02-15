@@ -56,11 +56,10 @@ defmodule GitExploring.LogFormatter do
   end
 
   def create_commits_bunch_from_squash_tail( commits, hash, author, date ) do
-    for c <- commits do
-      parse_references_for_create_commit( [hash, author, date, c] )
-    end
+    for c <- commits, do: parse_references_for_create_commit( [hash, author, date, c] )
   end
 
+  @docs " ### Utils ###"
   def parse_references_for_create_commit( [hash, author, date, description] ) do
     [_, author_email, _] = author |> String.split(["<", ">"])
     [_, commit_date] = date |> String.split("   ")
