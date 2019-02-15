@@ -34,10 +34,20 @@ defmodule GitExploring.Formatter do
     end
   end
 
-  #TODO: Make a bunch of commits per squash
   def get_refs_from_squash( commit ) do
     [ hash | [author | [ date | commits_tail] ] ] = commit
-    [hash, author, date, "  squash commit"]
+    commits_tail
+      |> clean_data_from_empty_spaces()
+      |> create_commits_bunch_from_squash( hash, author, date )
+  end
+
+  def clean_data_from_empty_spaces( squash_commits_messy ) do
+    commits_without_spaces = for c <- squash_commits_messy, do: String.trim( c )
+    Enum.filter( commits_without_spaces, fn c -> c != "" end)
+  end
+
+  def create_commits_bunch_from_squash( commits, hash, author, date ) do
+    for c <- commits, do: [hash, author, date, c]
   end
 
 end
