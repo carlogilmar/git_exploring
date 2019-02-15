@@ -15,4 +15,11 @@ defmodule CommitDescriptionsAnalizerTest do
     assert length(words_list) == 28
   end
 
+  test "Count the times that a word appear" do
+    words = ["word1", "word2", "word3", "word2", "word3", "word1", "word2"]
+    words_counters = CommitDescriptionsAnalizer.get_words_counters( words )
+    words_countes_expected = [ {"word1", 2},  {"word2", 3},  {"word3", 2} ]
+    assert words_counters == words_countes_expected
+  end
+
 end
