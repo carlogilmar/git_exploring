@@ -2,7 +2,8 @@ defmodule GitExploring.Formatter do
 
   def get_commit_lines( output_from_log ) do
     commit_lines = parse_commits_from_log( output_from_log )
-    for commit <- commit_lines, do: parse_commit_references( commit )
+    commit_references = for commit <- commit_lines, do: parse_commit_references( commit )
+    commit_references |> List.flatten()
   end
 
   def parse_commits_from_log( output ) do
@@ -12,10 +13,17 @@ defmodule GitExploring.Formatter do
   end
 
   def parse_commit_references( commit ) do
-    [hash, author, date, description] = commit |> String.split("\n") |> get_refs()
-    [_, author_email, _] = author |> String.split(["<", ">"])
-    [_, commit_date] = date |> String.split("   ")
-    { String.trim(hash), author_email, commit_date, String.trim(description) }
+    commit = commit |> String.split("\n")
+    commit_length = commit |> length()
+    case commit_length do
+      5 -> get_refs_from_commit( commit )
+      6 -> get_refs_from_merge( commit )
+      _ -> get_refs_from_squash( commit )
+    end
+    #[hash, author, date, description] = commit |> String.split("\n") |> get_refs()
+    #[_, author_email, _] = author |> String.split(["<", ">"])
+    #[_, commit_date] = date |> String.split("   ")
+    #{ String.trim(hash), author_email, commit_date, String.trim(description) }
   end
 
   def get_refs( commit ) do
@@ -28,14 +36,24 @@ defmodule GitExploring.Formatter do
 
   def get_refs_from_commit( commit ) do
     [hash, author, date, _empty, description] = commit
-    [hash, author, date, description]
+    [_, author_email, _] = author |> String.split(["<", ">"])
+    [_, commit_date] = date |> String.split("   ")
+    { String.trim(hash), author_email, commit_date, String.trim(description) }
   end
 
   def get_refs_from_merge( commit )do
     [ c1, c2, c3, c4, c5, c6] = commit
     case c5 do
-      "" -> [ c1, c3, c4, c6]
-      _ -> [ c1, c2, c3, c5 ]
+      "" ->
+        [hash, author, date, description] = [ c1, c3, c4, c6]
+        [_, author_email, _] = author |> String.split(["<", ">"])
+        [_, commit_date] = date |> String.split("   ")
+        { String.trim(hash), author_email, commit_date, String.trim(description) }
+      _ ->
+        [hash, author, date, description] = [ c1, c2, c3, c5]
+        [_, author_email, _] = author |> String.split(["<", ">"])
+        [_, commit_date] = date |> String.split("   ")
+        { String.trim(hash), author_email, commit_date, String.trim(description) }
     end
   end
 
@@ -52,7 +70,11 @@ defmodule GitExploring.Formatter do
   end
 
   def create_commits_bunch_from_squash( commits, hash, author, date ) do
-    for c <- commits, do: [hash, author, date, c]
+    author_email = author |> String.split(["<", ">"])
+    commit_date = date |> String.split("   ")
+    for c <- commits do
+      { String.trim(hash), author_email, commit_date, String.trim(c) }
+    end
   end
 
 end
