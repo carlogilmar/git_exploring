@@ -1,4 +1,5 @@
 defmodule GitExploring.LogFormatter do
+  alias GitExploring.ParserUtil
 
   @doc " ### Main Module  ###"
   def get_commit_lines_from_log( output_from_log ) do
@@ -6,6 +7,14 @@ defmodule GitExploring.LogFormatter do
       |> parse_commits_from_log()
       |> build_commit_references_as_tuples_from_log()
       |> List.flatten()
+      |> set_dates_in_commits()
+  end
+
+  def set_dates_in_commits(commits) do
+    for {commit, author, date_for_parse, desc} <- commits do
+      date = ParserUtil.parse_date(date_for_parse)
+      {commit, author, date, desc}
+    end
   end
 
   def parse_commits_from_log( output ) do
