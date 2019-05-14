@@ -6,7 +6,7 @@ defmodule GitExploring do
   def start_analysis( file_path ) do
     {resp, _code} = System.cmd("git", ["status"], cd: file_path)
     case resp do
-      "" -> IO.puts "Git Project not found! Please select a project using git..."
+      "" -> raise "Git Project not found! Please select a project using git..."
       _ -> reading_git_log( file_path )
     end
   end
