@@ -18,6 +18,11 @@ defmodule GitExploring do
     end
   end
 
+  def describe_branch(file_path, reference) do
+    commits = reading_git_log(file_path)
+    Enum.filter(commits, fn {_reference, _author, _date, desc} -> String.contains?(desc, reference) end)
+  end
+
   # Read the log
   defp reading_git_log( file_path ) do
     {output_from_log, _code} = System.cmd("git", ["log", "--all"], cd: file_path)
